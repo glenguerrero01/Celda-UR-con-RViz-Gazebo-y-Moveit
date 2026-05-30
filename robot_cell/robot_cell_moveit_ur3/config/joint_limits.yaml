@@ -1,0 +1,73 @@
+# joint_limits.yaml para UR3 + gripper
+# Valores ajustados para planificacion estable en simulacion.
+
+# Scaling factors globales: MoveIt multiplica los limites por estos.
+# 0.1 = 10% del maximo. Puedes subir hasta 1.0 para velocidad maxima.
+# Para depurar/aprender se recomienda dejarlos bajos.
+default_velocity_scaling_factor: 0.1
+default_acceleration_scaling_factor: 0.1
+
+joint_limits:
+
+  # ===== Brazo UR3 =====
+  # Velocidades segun datasheet UR3.
+  # Aceleraciones REBAJADAS desde 3.14/6.28 para evitar movimientos
+  # bruscos en simulacion y oscilaciones en el controlador.
+
+  ur3_shoulder_pan_joint:
+    has_position_limits: true
+    has_velocity_limits: true
+    max_velocity: 3.1415926535897931      # pi rad/s (datasheet UR3)
+    has_acceleration_limits: true
+    max_acceleration: 5.0                  # antes 3.14, mas margen
+    has_jerk_limits: false
+
+  ur3_shoulder_lift_joint:
+    has_position_limits: true
+    has_velocity_limits: true
+    max_velocity: 3.1415926535897931
+    has_acceleration_limits: true
+    max_acceleration: 5.0
+    has_jerk_limits: false
+
+  ur3_elbow_joint:
+    has_position_limits: true
+    has_velocity_limits: true
+    max_velocity: 3.1415926535897931
+    has_acceleration_limits: true
+    max_acceleration: 5.0
+    has_jerk_limits: false
+
+  ur3_wrist_1_joint:
+    has_position_limits: true
+    has_velocity_limits: true
+    max_velocity: 6.2831853071795862      # 2*pi rad/s (datasheet UR3)
+    has_acceleration_limits: true
+    max_acceleration: 10.0                 # antes 6.28, mas margen
+    has_jerk_limits: false
+
+  ur3_wrist_2_joint:
+    has_position_limits: true
+    has_velocity_limits: true
+    max_velocity: 6.2831853071795862
+    has_acceleration_limits: true
+    max_acceleration: 10.0
+    has_jerk_limits: false
+
+  ur3_wrist_3_joint:
+    has_position_limits: true
+    has_velocity_limits: true
+    max_velocity: 6.2831853071795862
+    has_acceleration_limits: true
+    max_acceleration: 10.0
+    has_jerk_limits: false
+
+  # ===== Gripper =====
+  # Joint prismatic, unidades en metros (no radianes).
+  g_left_joint:
+    has_position_limits: true
+    has_velocity_limits: true
+    max_velocity: 0.3                      # m/s
+    has_acceleration_limits: true
+    max_acceleration: 2.0                  # m/s^2, subido de 1.0 para cierres mas rapidos
+    has_jerk_limits: false

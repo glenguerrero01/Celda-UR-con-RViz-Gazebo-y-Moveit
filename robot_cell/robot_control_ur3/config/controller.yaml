@@ -1,0 +1,51 @@
+# Controladores ros2_control para UR3 + gripper en Gazebo.
+# Nombres consistentes con el moveit_controllers.yaml del paquete moveit_ur3.
+
+controller_manager:
+  ros__parameters:
+    update_rate: 500
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+    ur_arm_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+    gripper_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+# ==== Brazo UR3 ====
+ur_arm_controller:
+  ros__parameters:
+    joints:
+      - ur3_shoulder_pan_joint
+      - ur3_shoulder_lift_joint
+      - ur3_elbow_joint
+      - ur3_wrist_1_joint
+      - ur3_wrist_2_joint
+      - ur3_wrist_3_joint
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+      - velocity
+    allow_partial_joints_goal: false
+    state_publish_rate: 50.0
+    action_monitor_rate: 20.0
+    constraints:
+      stopped_velocity_tolerance: 0.01
+      goal_time: 0.0
+
+# ==== Gripper ====
+gripper_controller:
+  ros__parameters:
+    joints: [g_left_joint]
+    command_interfaces: [position]
+    state_interfaces: [position, velocity]
+    allow_partial_joints_goal: false
+    state_publish_rate: 50.0
+    action_monitor_rate: 20.0
+    constraints:
+      goal_time: 5.0
+      stopped_velocity_tolerance: 0.01
+      g_left_joint: {goal: 0.020}

@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<sdf version="1.9">
+  <model name="mug">
+    <!-- Sin self_collide; el modelo es un unico link -->
+    <pose>0 0 0 0 0 0</pose>
+
+    <link name="mug_link">
+      <inertial>
+        <mass>0.30</mass>
+        <inertia>
+          <ixx>2.5e-4</ixx>
+          <iyy>2.5e-4</iyy>
+          <izz>2.0e-4</izz>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyz>0</iyz>
+        </inertia>
+        <pose>0 0 0.05 0 0 0</pose>
+      </inertial>
+
+      <!-- Colision: cilindro simple que aproxima la taza -->
+      <collision name="mug_collision">
+        <pose>0 0 0.05 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.04</radius>
+            <length>0.10</length>
+          </cylinder>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>1.0</mu>
+              <mu2>1.0</mu2>
+            </ode>
+          </friction>
+          <contact>
+            <ode>
+              <kp>1e6</kp>
+              <kd>100</kd>
+            </ode>
+          </contact>
+        </surface>
+      </collision>
+
+      <!-- Visual: malla decorativa de la taza -->
+      <visual name="mug_visual">
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>package://robot_description/meshes/cc_by/Threshold_Porcelain_Coffee_Mug_All_Over_Bead_White/meshes/model.obj</uri>
+            <scale>1 1 1</scale>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+  </model>
+</sdf>

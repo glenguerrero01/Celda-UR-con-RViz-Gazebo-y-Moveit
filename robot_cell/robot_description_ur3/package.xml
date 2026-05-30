@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <!-- Debe coincidir con CMakeLists.txt: project(robot_description) -->
+  <name>robot_description_ur3</name>
+  <version>1.0.0</version>
+
+  <description>UR robot cell (URDF/Xacro, launch y utilidades para ROS 2).</description>
+
+  <!-- Mantenimiento / autoría -->
+  <maintainer email="exner@fzi.de">Felix Exner</maintainer>
+  <maintainer email="dandvrodrigo@gmail.com">Daniel Rodrigo</maintainer>
+  <author email="durchdewald@fzi.de">Felix Durchdewald</author>
+
+  <!-- Licencias (incluye licencia UR para assets gráficos) -->
+  <license file="LICENSE">BSD-3-Clause</license>
+  <license file="UR_LICENSE.txt">Universal Robots A/S’ Terms and Conditions for Use of Graphical Documentation</license>
+
+  <!-- Referencias (opcionales) -->
+  <url type="website">https://fuel.gazebosim.org/1.0/jfrascon/models/Euro_pallet_w_stacked_boxes</url>
+  <url type="website">https://www.universal-robots.com/legal/terms-and-conditions/terms_and_conditions_for_use_of_graphical_documentation.txt</url>
+
+  <!-- Herramienta de build -->
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <!-- Ejecutable C++ definido en CMake (static_state_publisher) -->
+  <!-- Usar <depend> en formato 3 cubre build + exec -->
+  <depend>rclcpp</depend>
+  <depend>sensor_msgs</depend>
+
+  <!-- Descripción / visualización -->
+  <exec_depend>xacro</exec_depend>
+  <exec_depend>robot_state_publisher</exec_depend>
+  <exec_depend>joint_state_publisher</exec_depend>
+  <exec_depend>joint_state_publisher_gui</exec_depend>
+  <exec_depend>rviz2</exec_depend>
+
+  <!-- UR: descripción y driver -->
+  <exec_depend>ur_description</exec_depend>
+  <exec_depend>ur_robot_driver</exec_depend>
+  <exec_depend>ur_client_library</exec_depend>
+
+  <!-- ros2_control (runtime) -->
+  <exec_depend>controller_manager</exec_depend>
+  <exec_depend>joint_state_broadcaster</exec_depend>
+  <exec_depend>joint_trajectory_controller</exec_depend>
+  <exec_depend>position_controllers</exec_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

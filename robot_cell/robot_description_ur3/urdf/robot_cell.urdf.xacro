@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<!-- Punto de entrada XACRO: invoca la macro robot_cell y pasa parámetros del UR -->
+<robot name="robot_cell" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Tras la instalación, los URDF quedan en share/robot_description/urdf.
+       En ROS 2 usa $(find ...) en lugar de $(find ...) -->
+  <xacro:include filename="$(find robot_description)/urdf/robot_cell_macro.xacro"/>
+
+  <!-- Parámetros del modelo UR (por defecto UR30, usando ur_description de Jazzy) -->
+  <xacro:arg name="ur_type" default="ur3"/>
+  <xacro:arg name="joint_limits_parameters_file"
+             default="$(find ur_description)/config/$(arg ur_type)/joint_limits.yaml"/>
+  <xacro:arg name="kinematics_parameters_file"
+             default="$(find ur_description)/config/$(arg ur_type)/default_kinematics.yaml"/>
+  <xacro:arg name="physical_parameters_file"
+             default="$(find ur_description)/config/$(arg ur_type)/physical_parameters.yaml"/>
+  <xacro:arg name="visual_parameters_file"
+             default="$(find ur_description)/config/$(arg ur_type)/visual_parameters.yaml"/>
+
+  <!-- Marco absoluto -->
+  <link name="world"/>
+
+  <!-- Invocación de la macro definida en robot_cell_macro.xacro -->
+  <xacro:robot_cell
+      parent="world"
+      ur_type="$(arg ur_type)"
+      joint_limits_parameters_file="$(arg joint_limits_parameters_file)"
+      kinematics_parameters_file="$(arg kinematics_parameters_file)"
+      physical_parameters_file="$(arg physical_parameters_file)"
+      visual_parameters_file="$(arg visual_parameters_file)">
+    <!-- Posición/orientación de la celda respecto a world -->
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </xacro:robot_cell>
+
+</robot>

@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+<!--
+  URDF de entrada para Gazebo (gz_ros2_control) con UR3 + gripper.
+
+  Bloque ros2_control con gz_ros2_control/GazeboSimSystem para los 6 joints
+  del UR3 + 1 del gripper. Plugin gz_ros2_control que arranca el
+  controller_manager dentro de Gazebo.
+-->
+<robot name="robot_cell" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Geometria de la celda (UR + entorno + pinza) -->
+  <xacro:include filename="$(find robot_description_ur3)/urdf/robot_cell_macro.xacro"/>
+
+  <!-- Parametros del modelo UR -->
+  <xacro:arg name="ur_type" default="ur3"/>
+  <xacro:arg name="joint_limit_parameters_file" default="$(find ur_description)/config/$(arg ur_type)/joint_limits.yaml"/>
+  <xacro:arg name="kinematics_parameters_file"  default="$(find ur_description)/config/$(arg ur_type)/default_kinematics.yaml"/>
+  <xacro:arg name="physical_parameters_file"    default="$(find ur_description)/config/$(arg ur_type)/physical_parameters.yaml"/>
+  <xacro:arg name="visual_parameters_file"      default="$(find ur_description)/config/$(arg ur_type)/visual_parameters.yaml"/>
+
+  <!-- Ruta al YAML de controladores que cargara gz_ros2_control -->
+  <xacro:arg name="controllers_file" default="$(find robot_control_ur3)/config/controller.yaml"/>
+
+  <!-- Marco absoluto -->
+  <link name="world"/>
+
+  <!-- Instanciar la celda. origin 0 0 0 para coincidir con el URDF de MoveIt -->
+  <xacro:robot_cell
+      parent="world"
+      ur_type="$(arg ur_type)"
+      joint_limits_parameters_file="$(arg joint_limit_parameters_file)"
+      kinematics_parameters_file="$(arg kinematics_parameters_file)"
+      physical_parameters_file="$(arg physical_parameters_file)"
+      visual_parameters_file="$(arg visual_parameters_file)">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </xacro:robot_cell>
+
+  <!-- ====================================================================
+       Bloque ros2_control para SIMULACION (gz_ros2_control/GazeboSimSystem)
+       ==================================================================== -->
+  <ros2_control name="robot_cell_gz_system" type="system">
+    <hardware>
+      <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+    </hardware>
+
+    <joint name="ur3_shoulder_pan_joint">
+      <command_interface name="position"/>
+      <state_interface name="position"><param name="initial_value">0.0</param></state_interface>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="ur3_shoulder_lift_joint">
+      <command_interface name="position"/>
+      <state_interface name="position"><param name="initial_value">-1.57</param></state_interface>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="ur3_elbow_joint">
+      <command_interface name="position"/>
+      <state_interface name="position"><param name="initial_value">0.0</param></state_interface>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="ur3_wrist_1_joint">
+      <command_interface name="position"/>
+      <state_interface name="position"><param name="initial_value">-1.57</param></state_interface>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="ur3_wrist_2_joint">
+      <command_interface name="position"/>
+      <state_interface name="position"><param name="initial_value">0.0</param></state_interface>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="ur3_wrist_3_joint">
+      <command_interface name="position"/>
+      <state_interface name="position"><param name="initial_value">0.0</param></state_interface>
+      <state_interface name="velocity"/>
+    </joint>
+
+    <!-- Pinza -->
+    <joint name="g_left_joint">
+      <command_interface name="position"/>
+      <state_interface name="position"><param name="initial_value">0.0092</param></state_interface>
+      <state_interface name="velocity"/>
+    </joint>
+  </ros2_control>
+
+  <!-- ====================================================================
+       Plugin gz_ros2_control: arranca controller_manager dentro de Gazebo
+       ==================================================================== -->
+  <gazebo>
+    <plugin filename="libgz_ros2_control-system.so" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+      <parameters>$(arg controllers_file)</parameters>
+    </plugin>
+  </gazebo>
+ 
+
+</robot>

@@ -1,0 +1,136 @@
+<?xml version="1.0"?>
+<robot name="gripper_minimal" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Materiales (solo color para RViz) -->
+  <material name="metal"><color rgba="0.75 0.75 0.78 1"/></material>
+  <material name="rubber"><color rgba="0.10 0.10 0.10 1"/></material>
+
+  <!-- Pinza paralela 2 dedos, 1 DOF (prismatico), el otro mimic -->
+  <xacro:macro name="gripper_minimal" params="parent_link prefix:='g_'">
+
+    <!-- Base/adaptador (mas grande) -->
+    <link name="${prefix}base">
+      <visual>
+        <geometry><box size="0.060 0.060 0.030"/></geometry>
+        <material name="metal"/>
+      </visual>
+      <collision>
+        <geometry><box size="0.060 0.060 0.030"/></geometry>
+      </collision>
+      <inertial>
+        <mass value="0.18"/>
+        <origin xyz="0 0 0.015"/>
+        <inertia ixx="1.1e-3" iyy="1.1e-3" izz="1.1e-3" ixy="0" ixz="0" iyz="0"/>
+      </inertial>
+    </link>
+    <!-- Montaje a tool0: PEGADA (1.5 cm) y GIRADA +90 en Z
+         Para que el eje Y de la pinza (apertura) quede horizontal -->
+    <joint name="${prefix}mount" type="fixed">
+      <parent link="${parent_link}"/>
+      <child  link="${prefix}base"/>
+      <origin xyz="0 0 0.015" rpy="0 -1.57079632679 0"/>
+    </joint>
+
+    <!-- Dedo IZQUIERDO (maestro) - mas largo y grueso -->
+    <!-- CAMBIO: masa subida de 0.07 a 0.25 para mas fuerza normal contra la caja -->
+    <link name="${prefix}left_finger">
+      <!-- brazo -->
+      <visual>
+        <geometry><box size="0.090 0.016 0.016"/></geometry>
+        <material name="metal"/>
+        <origin xyz="0.045 0 0"/>
+      </visual>
+      <collision>
+        <geometry><box size="0.090 0.016 0.016"/></geometry>
+        <origin xyz="0.045 0 0"/>
+      </collision>
+      <!-- almohadilla de goma -->
+      <visual>
+        <geometry><box size="0.025 0.012 0.016"/></geometry>
+        <material name="rubber"/>
+        <origin xyz="0.1025 0 0"/>
+      </visual>
+      <collision>
+        <geometry><box size="0.025 0.012 0.016"/></geometry>
+        <origin xyz="0.1025 0 0"/>
+      </collision>
+      <inertial>
+        <mass value="0.25"/>
+        <origin xyz="0.040 0 0"/>
+        <inertia ixx="1e-3" iyy="1e-3" izz="1e-3" ixy="0" ixz="0" iyz="0"/>
+      </inertial>
+    </link>
+
+    <!-- Dedo DERECHO (espejo) -->
+    <!-- CAMBIO: misma masa que el izquierdo para comportamiento simetrico -->
+    <link name="${prefix}right_finger">
+      <visual>
+        <geometry><box size="0.090 0.016 0.016"/></geometry>
+        <material name="metal"/>
+        <origin xyz="0.045 0 0"/>
+      </visual>
+      <collision>
+        <geometry><box size="0.090 0.016 0.016"/></geometry>
+        <origin xyz="0.045 0 0"/>
+      </collision>
+      <visual>
+        <geometry><box size="0.025 0.012 0.016"/></geometry>
+        <material name="rubber"/>
+        <origin xyz="0.1025 0 0"/>
+      </visual>
+      <collision>
+        <geometry><box size="0.025 0.012 0.016"/></geometry>
+        <origin xyz="0.1025 0 0"/>
+      </collision>
+      <inertial>
+        <mass value="0.25"/>
+        <origin xyz="0.040 0 0"/>
+        <inertia ixx="1e-3" iyy="1e-3" izz="1e-3" ixy="0" ixz="0" iyz="0"/>
+      </inertial>
+    </link>
+
+    <!-- Juntas PRISMATICAS: eje Y. 0=cerrado; abre ~90 mm total -->
+    <!-- CAMBIO: effort subido de 120 a 500 para mas fuerza de cierre -->
+    <joint name="${prefix}left_joint" type="prismatic">
+      <parent link="${prefix}base"/>
+      <child  link="${prefix}left_finger"/>
+      <axis xyz="0 1 0"/>
+      <limit lower="-0.001" upper="0.045" effort="500" velocity="0.30"/>
+      <dynamics damping="0.2" friction="0.0"/>
+    </joint>
+
+    <joint name="${prefix}right_joint" type="prismatic">
+      <parent link="${prefix}base"/>
+      <child  link="${prefix}right_finger"/>
+      <axis xyz="0 -1 0"/>
+      <mimic joint="${prefix}left_joint" multiplier="1.0" offset="0.0"/>
+      <limit lower="-0.001" upper="0.045" effort="500" velocity="0.30"/>
+    </joint>
+
+  </xacro:macro>
+
+  <!-- ====================================================================
+       Bloques Gazebo: alta friccion en los dedos (pads) del gripper.
+       Estos bloques van al nivel de <robot>, fuera de la macro.
+       mu1/mu2 muy altos para maximizar la friccion al agarrar.
+       kp/kd para hacer el contacto rigido.
+       ==================================================================== -->
+  <gazebo reference="g_left_finger">
+    <mu1>3.0</mu1>
+    <mu2>3.0</mu2>
+    <kp>1e7</kp>
+    <kd>100</kd>
+    <minDepth>0.001</minDepth>
+    <maxVel>0.0</maxVel>
+  </gazebo>
+
+  <gazebo reference="g_right_finger">
+    <mu1>3.0</mu1>
+    <mu2>3.0</mu2>
+    <kp>1e7</kp>
+    <kd>100</kd>
+    <minDepth>0.001</minDepth>
+    <maxVel>0.0</maxVel>
+  </gazebo>
+
+</robot>
